@@ -11,9 +11,35 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        setupHierarchy()
+        setupLayout()
+        setupView()
+    }
+    
+    
+    private func setupHierarchy() {
+        
+    }
+    
+    private func setupLayout() {
+        
+    }
+    
+    private func setupView() {
+        
     }
 
 
+}
+
+extension ViewController {
+    enum Metric {
+        
+    }
+    
+    enum Strings {
+        
+    }
 }
 
