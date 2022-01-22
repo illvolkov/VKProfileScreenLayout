@@ -55,7 +55,39 @@ class ViewController: UIViewController {
     }()
     
     //Создание кнопки с установкой статуса
-    private lazy var statusButton = createButtons(with: "Установить статус", colorTitle: UIColor(red: 106/255.0, green: 160/255.0, blue: 220/255.0, alpha: 1), icon: nil, secondIcon: nil)
+    private lazy var statusButton = createInfoButtons(with: "Установить статус", colorTitle: UIColor(red: 106/255.0, green: 160/255.0, blue: 220/255.0, alpha: 1), icon: nil, secondIcon: nil)
+    
+    //Создание кнопки редактировать
+    private lazy var editButton: UIButton = {
+        let editButton = UIButton()
+        
+        editButton.setTitle("Редактировать", for: .normal)
+        editButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .medium)
+        editButton.titleLabel?.textColor = .white
+        editButton.backgroundColor = UIColor(red: 44/255.0, green: 45/255.0, blue: 46/255.0, alpha: 1)
+        editButton.titleLabel?.textAlignment = .center
+        editButton.titleLabel?.adjustsFontSizeToFitWidth = true
+        editButton.layer.cornerRadius = 10
+        
+        
+        return editButton
+    }()
+    
+    //Создание StackView с кнопками добавления контента
+    private lazy var addContentStackView: UIStackView = {
+        let addContentStackView = UIStackView()
+        
+        addContentStackView.axis = .horizontal
+        addContentStackView.distribution = .equalSpacing
+        
+        return addContentStackView
+    }()
+    
+    //Создание кнопок с добавлением контента
+    private lazy var storiesButton = createContentButtons(with: "История", icon: "camera")
+    private lazy var postButton = createContentButtons(with: "Запись", icon: "square.and.pencil")
+    private lazy var photoButton = createContentButtons(with: "Фото", icon: "photo")
+    private lazy var clipButton = createContentButtons(with: "Клип", icon: "play.square")
 
     //MARK: - Lifecycle
     
@@ -76,6 +108,14 @@ class ViewController: UIViewController {
         view.addSubview(fullNameLabel)
         view.addSubview(statusButton)
         view.addSubview(networkStatusLabel)
+        view.addSubview(editButton)
+        
+        view.addSubview(addContentStackView)
+        addContentStackView.addArrangedSubview(storiesButton)
+        addContentStackView.addArrangedSubview(postButton)
+        addContentStackView.addArrangedSubview(photoButton)
+        addContentStackView.addArrangedSubview(clipButton)
+        
     }
     
     //Установка констрейнтов
@@ -104,7 +144,20 @@ class ViewController: UIViewController {
         networkStatusLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.157).isActive = true
         networkStatusLabel.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.05).isActive = true
         
-
+        editButton.translatesAutoresizingMaskIntoConstraints = false
+        editButton.topAnchor.constraint(equalTo: networkStatusLabel.bottomAnchor, constant: 32).isActive = true
+        editButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 15).isActive = true
+        editButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -15).isActive = true
+        editButton.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.098).isActive = true
+        editButton.titleLabel?.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.045).isActive = true
+        
+        addContentStackView.translatesAutoresizingMaskIntoConstraints = false
+        addContentStackView.topAnchor.constraint(equalTo: editButton.bottomAnchor, constant: 15).isActive = true
+        addContentStackView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 20).isActive = true
+        addContentStackView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20).isActive = true
+        addContentStackView.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.15).isActive = true
+        
+        
     }
     
     //Настройки главной View
@@ -115,7 +168,7 @@ class ViewController: UIViewController {
     //MARK: - Create functions
     
     //Функция создания кнопок с информацией о пользователе и кнопки с установкой статуса
-    private func createButtons(with title: String, colorTitle: UIColor, icon: String?, secondIcon: String?) -> UIButton {
+    private func createInfoButtons(with title: String, colorTitle: UIColor, icon: String?, secondIcon: String?) -> UIButton {
         let button = UIButton(type: .system)
         
         button.setTitle(title, for: .normal)
@@ -136,6 +189,23 @@ class ViewController: UIViewController {
         return button
     }
     
+    //Создание кнопок с добавлением контента
+    private func createContentButtons(with title: String, icon: String) -> UIButton {
+        
+        var container = AttributeContainer()
+        container.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        var configuration = UIButton.Configuration.plain()
+        configuration.attributedTitle = AttributedString(title, attributes: container)
+        configuration.image = UIImage(systemName: icon)
+        configuration.imagePlacement = .top
+        configuration.imagePadding = 7
+        configuration.baseForegroundColor = UIColor(red: 106/255.0, green: 160/255.0, blue: 220/255.0, alpha: 1)
+        let button = UIButton(configuration: configuration, primaryAction: nil)
+        
+        return button
+    }
+    
+        
 }
 
 //MARK: - Constants
