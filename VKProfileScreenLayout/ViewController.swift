@@ -55,7 +55,7 @@ class ViewController: UIViewController {
     }()
     
     //Создание кнопки с установкой статуса
-    private lazy var statusButton = createInfoButtons(with: "Установить статус", colorTitle: UIColor(red: 106/255.0, green: 160/255.0, blue: 220/255.0, alpha: 1), icon: nil, secondIcon: nil)
+    private lazy var statusButton = createInfoButtons(with: "Установить статус", colorTitle: UIColor(red: 106/255.0, green: 160/255.0, blue: 220/255.0, alpha: 1), icon: nil, iconSize: nil)
     
     //Создание кнопки редактировать
     private lazy var editButton: UIButton = {
@@ -82,13 +82,39 @@ class ViewController: UIViewController {
         
         return addContentStackView
     }()
-    
+        
     //Создание кнопок с добавлением контента
     private lazy var storiesButton = createContentButtons(with: "История", icon: "camera")
     private lazy var postButton = createContentButtons(with: "Запись", icon: "square.and.pencil")
     private lazy var photoButton = createContentButtons(with: "Фото", icon: "photo")
     private lazy var clipButton = createContentButtons(with: "Клип", icon: "play.square")
-
+    
+    //Создание разделителя
+    private lazy var separatorView: UIView = {
+        let separatorView = UIView()
+        
+        separatorView.backgroundColor = .darkGray
+        
+        return separatorView
+    }()
+    
+    //Создание StackView с кнопками информации о пользователе
+    private lazy var infoButtonsStackView: UIStackView = {
+        let infoButtonsStackView = UIStackView()
+        
+        infoButtonsStackView.axis = .vertical
+        infoButtonsStackView.alignment = .leading
+        infoButtonsStackView.distribution = .equalSpacing
+        
+        return infoButtonsStackView
+    }()
+    
+    private lazy var cityButton = createInfoButtons(with: "   Город: Москва", colorTitle: UIColor(red: 141/255.0, green: 140/255.0, blue: 142/255.0, alpha: 1), icon: "house", iconSize: 12)
+    private lazy var subscribersButton = createInfoButtons(with: "   35 подписчиков", colorTitle: UIColor(red: 141/255.0, green: 140/255.0, blue: 142/255.0, alpha: 1), icon: "dot.radiowaves.up.forward", iconSize: 16)
+    private lazy var placeOfWorkButton = createInfoButtons(with: "   Указать место работы", colorTitle: UIColor(red: 106/255.0, green: 160/255.0, blue: 220/255.0, alpha: 1), icon: "briefcase", iconSize: 13)
+    private lazy var giftButton = createInfoButtons(with: "   Получить подарок", colorTitle: UIColor(red: 81/255.0, green: 65/255.0, blue: 164/255.0, alpha: 1), icon: "snowflake", iconSize: 16)
+    private lazy var detailedInfoButton = createInfoButtons(with: "   Подробная информация", colorTitle: .lightGray, icon: "exclamationmark.circle.fill", iconSize: 15)
+    
     //MARK: - Lifecycle
     
     //Вызов настроек после того как View появится на экране
@@ -115,6 +141,15 @@ class ViewController: UIViewController {
         addContentStackView.addArrangedSubview(postButton)
         addContentStackView.addArrangedSubview(photoButton)
         addContentStackView.addArrangedSubview(clipButton)
+        
+        view.addSubview(separatorView)
+        
+        view.addSubview(infoButtonsStackView)
+        infoButtonsStackView.addArrangedSubview(cityButton)
+        infoButtonsStackView.addArrangedSubview(subscribersButton)
+        infoButtonsStackView.addArrangedSubview(placeOfWorkButton)
+        infoButtonsStackView.addArrangedSubview(giftButton)
+        infoButtonsStackView.addArrangedSubview(detailedInfoButton)
         
     }
     
@@ -157,7 +192,19 @@ class ViewController: UIViewController {
         addContentStackView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20).isActive = true
         addContentStackView.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.15).isActive = true
         
+        separatorView.translatesAutoresizingMaskIntoConstraints = false
+        separatorView.topAnchor.constraint(equalTo: addContentStackView.bottomAnchor, constant: 10).isActive = true
+        separatorView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 15).isActive = true
+        separatorView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: 15).isActive = true
+        separatorView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.92).isActive = true
+        separatorView.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
+        infoButtonsStackView.translatesAutoresizingMaskIntoConstraints = false
+        infoButtonsStackView.topAnchor.constraint(equalTo: separatorView.bottomAnchor, constant: 15).isActive = true
+        infoButtonsStackView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 15).isActive = true
+        infoButtonsStackView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: 15).isActive = true
+        infoButtonsStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.92).isActive = true
+        infoButtonsStackView.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4).isActive = true
     }
     
     //Настройки главной View
@@ -168,22 +215,18 @@ class ViewController: UIViewController {
     //MARK: - Create functions
     
     //Функция создания кнопок с информацией о пользователе и кнопки с установкой статуса
-    private func createInfoButtons(with title: String, colorTitle: UIColor, icon: String?, secondIcon: String?) -> UIButton {
+    private func createInfoButtons(with title: String, colorTitle: UIColor, icon: String?, iconSize: CGFloat?) -> UIButton {
         let button = UIButton(type: .system)
         
         button.setTitle(title, for: .normal)
         button.setTitleColor(colorTitle, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 15, weight: .medium)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.titleLabel?.adjustsFontSizeToFitWidth = true
         
         if icon != nil {
-            button.setImage(UIImage(systemName: icon ?? ""), for: .normal)
+            let mediumConfig = UIImage.SymbolConfiguration(pointSize: iconSize ?? 0, weight: .medium, scale: .medium)
+            button.setImage(UIImage(systemName: icon ?? "", withConfiguration: mediumConfig), for: .normal)
             button.tintColor = colorTitle
-            
-            if secondIcon != nil {
-                button.setImage(UIImage(systemName: secondIcon ?? ""), for: .normal)
-                button.tintColor = colorTitle
-            }
         }
     
         return button
