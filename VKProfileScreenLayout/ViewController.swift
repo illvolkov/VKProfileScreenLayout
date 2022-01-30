@@ -17,6 +17,7 @@ class ViewController: UIViewController {
 
         let image = UIImage(named: Icons.avatarButtonIcon)
         avatarButton.setImage(image, for: .normal)
+        avatarButton.layer.masksToBounds = true
         avatarButton.layer.cornerRadius = Sizes.avatarButtonCorners
 
         return avatarButton
@@ -137,6 +138,17 @@ class ViewController: UIViewController {
                                                             icon: Icons.detailedInfoButtonIcon,
                                                             iconSize: Sizes.detailedInfoButtonIconSize)
     
+    //Иконка chevron для кнопки giftButton
+    private lazy var chevronImage: UIImageView = {
+        let chevron = UIImageView()
+        
+        let mediumConfig = UIImage.SymbolConfiguration(pointSize: 15, weight: .medium, scale: .medium)
+        chevron.image = UIImage(systemName: "chevron.right", withConfiguration: mediumConfig)
+        chevron.tintColor = UIColor(rgb: 0x6D5EBB)
+        return chevron
+    }()
+    
+    
     //MARK: - Lifecycle
     
     //Вызов настроек после того как View появится на экране
@@ -157,6 +169,7 @@ class ViewController: UIViewController {
         view.addSubview(statusButton)
         view.addSubview(networkStatusLabel)
         view.addSubview(editButton)
+        view.addSubview(chevronImage)
         
         view.addSubview(addContentStackView)
         addContentStackView.addArrangedSubview(storiesButton)
@@ -259,6 +272,10 @@ class ViewController: UIViewController {
                                                     multiplier: Offsets.infoButtonsStackViewWidthOffset).isActive = true
         infoButtonsStackView.heightAnchor.constraint(equalTo: view.widthAnchor,
                                                      multiplier: Offsets.infoButtonsStackViewHeightOffset).isActive = true
+        
+        chevronImage.translatesAutoresizingMaskIntoConstraints = false
+        chevronImage.leftAnchor.constraint(equalTo: giftButton.rightAnchor, constant: 5).isActive = true
+        chevronImage.topAnchor.constraint(equalTo: placeOfWorkButton.bottomAnchor, constant: 19).isActive = true
     }
     
     //Настройки главной View
@@ -291,11 +308,12 @@ class ViewController: UIViewController {
         
         var container = AttributeContainer()
         container.font = UIFont.systemFont(ofSize: Sizes.contentButtonsTitleSize, weight: .medium)
+        let mediumConfig = UIImage.SymbolConfiguration(weight: .medium)
         var configuration = UIButton.Configuration.plain()
         configuration.attributedTitle = AttributedString(title, attributes: container)
-        configuration.image = UIImage(systemName: icon)
+        configuration.image = UIImage(systemName: icon, withConfiguration: mediumConfig)
         configuration.imagePlacement = .top
-        configuration.imagePadding = 7
+        configuration.imagePadding = 9
         configuration.baseForegroundColor = Colors.contentButtonsColor
         let button = UIButton(configuration: configuration, primaryAction: nil)
         
@@ -305,40 +323,56 @@ class ViewController: UIViewController {
         
 }
 
+// Расширение для кастомного цвета
+extension UIColor {
+    convenience init(red: Int, green: Int, blue: Int) {
+        assert(red >= 0 && red <= 255, "Invalid red component")
+        assert(green >= 0 && red <= 255, "Invalid green component")
+        assert(blue >= 0 && red <= 255, "Invalid blue component")
+        self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
+    }
+    
+    convenience init(rgb: Int) {
+        self.init(red: (rgb >> 16) & 0xFF,
+                  green: (rgb >> 8) & 0xFF,
+                  blue: rgb & 0xFF)
+    }
+}
+
 //MARK: - Constants
 
 extension ViewController {
     
     enum Sizes {
-        static let avatarButtonCorners: CGFloat = 50
-        static let fullNameLabelSize: CGFloat = 20
-        static let networkStatusLabelSize: CGFloat = 15
-        static let netWorkStatusLabelIconSize: CGFloat = 13
+        static let avatarButtonCorners: CGFloat = 47
+        static let fullNameLabelSize: CGFloat = 22
+        static let networkStatusLabelSize: CGFloat = 16
+        static let netWorkStatusLabelIconSize: CGFloat = 14
         static let editButtonTitleSize: CGFloat = 15
         static let editButtonCorners: CGFloat = 10
-        static let cityButtonIconSize: CGFloat = 12
-        static let subscribersButtonIconSize: CGFloat = 16
-        static let placeOfWorkButtonIconSize: CGFloat = 13
-        static let giftButtonIconSize: CGFloat = 16
-        static let detailedInfoButtonIconSize: CGFloat = 15
-        static let infoButtonsTitleSize: CGFloat = 16
-        static let contentButtonsTitleSize: CGFloat = 14
+        static let cityButtonIconSize: CGFloat = 14
+        static let subscribersButtonIconSize: CGFloat = 20
+        static let placeOfWorkButtonIconSize: CGFloat = 15
+        static let giftButtonIconSize: CGFloat = 19
+        static let detailedInfoButtonIconSize: CGFloat = 17
+        static let infoButtonsTitleSize: CGFloat = 17
+        static let contentButtonsTitleSize: CGFloat = 15
     }
     
     enum Offsets {
         static let avatarButtonTopOffset: CGFloat = 100
         static let avatarButtonLeftOffset: CGFloat = 15
-        static let avatarButtonWidth: CGFloat = 0.25
+        static let avatarButtonWidth: CGFloat = 0.23
         static let avatarButtonRatio: CGFloat = 1
-        static let fullNameLabelTopOffset: CGFloat = 117
+        static let fullNameLabelTopOffset: CGFloat = 114
         static let fullNameLabelLeftOffset: CGFloat = 15
         static let fullNameLabelWidthOffset: CGFloat = 0.37
         static let fullNameLabelHeightOffset: CGFloat = 0.06
-        static let statusButtonTopOffset: CGFloat = 0
+        static let statusButtonTopOffset: CGFloat = 2
         static let statusButtonLeftOffset: CGFloat = 15
         static let statusButtonWidthOffset: CGFloat = 0.33
         static let statusButtonHeightOffset: CGFloat = 0.06
-        static let networkStatusLabelTopOffset: CGFloat = 0
+        static let networkStatusLabelTopOffset: CGFloat = 2
         static let networkStatusLabelLeftOffset: CGFloat = 15
         static let networkStatusLabelWidthOffset: CGFloat = 0.157
         static let networkStatusLabelHeightOffset: CGFloat = 0.05
@@ -380,7 +414,7 @@ extension ViewController {
     }
     
     enum Icons {
-        static let avatarButtonIcon: String = "photo.png"
+        static let avatarButtonIcon: String = "rsq8"
         static let networkStatusLabelIcon: String = "iphone.homebutton"
         static let storiesButtonIcon: String = "camera"
         static let postButtonIcon: String = "square.and.pencil"
@@ -397,17 +431,17 @@ extension ViewController {
     
     enum Colors {
         static let fullNameTextColor: UIColor = .white
-        static let networkStatusLabelTextColor: UIColor = .darkGray
+        static let networkStatusLabelTextColor = UIColor(rgb: 0x707072)
         static let separatorViewColor: UIColor = .darkGray
-        static let statusButtonTitleColor = UIColor(red: 106/255.0, green: 160/255.0, blue: 220/255.0, alpha: 1)
+        static let statusButtonTitleColor = UIColor(rgb: 0x78AAE3)
         static let editButtonTitleColor: UIColor = .white
-        static let editButtonBackColor = UIColor(red: 44/255.0, green: 45/255.0, blue: 46/255.0, alpha: 1)
-        static let cityButtonColor = UIColor(red: 141/255.0, green: 140/255.0, blue: 142/255.0, alpha: 1)
-        static let subscribersButtonColor = UIColor(red: 141/255.0, green: 140/255.0, blue: 142/255.0, alpha: 1)
-        static let placeOfWorkButtonColor = UIColor(red: 106/255.0, green: 160/255.0, blue: 220/255.0, alpha: 1)
-        static let giftButtonColor = UIColor(red: 81/255.0, green: 65/255.0, blue: 164/255.0, alpha: 1)
+        static let editButtonBackColor = UIColor(rgb: 0x2C2D2E)
+        static let cityButtonColor = UIColor(rgb: 0x969597)
+        static let subscribersButtonColor = UIColor(rgb: 0x969597)
+        static let placeOfWorkButtonColor = UIColor(rgb: 0x78AAE3)
+        static let giftButtonColor = UIColor(rgb: 0x6D5EBB)
         static let detailedInfoButtonColor: UIColor = .lightGray
-        static let setupViewBackColor = UIColor(red: 25/255.0, green: 25/255.0, blue: 26/255.0, alpha: 1)
-        static let contentButtonsColor = UIColor(red: 106/255.0, green: 160/255.0, blue: 220/255.0, alpha: 1)
+        static let setupViewBackColor = UIColor(rgb: 0x19191A)
+        static let contentButtonsColor = UIColor(rgb: 0x78AAE3)
     }
 }
